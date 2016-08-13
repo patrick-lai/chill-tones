@@ -17,7 +17,6 @@ import { title, html } from './index.md';
 import "jquery.ripples";
 import lodash from "lodash";
 import SC from "soundcloud";
-import http from "es6-request";
 import AtvImg from 'react-atv-img';
 
 var mainStyle = {
