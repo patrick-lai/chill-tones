@@ -35,7 +35,7 @@ class HomePage extends React.Component {
     var soundFile = localStorage.getItem('soundUrl');
 
     if(!soundFile){
-      soundFile = 'https://soundcloud.com/blackchaosvortex/shigatsu-wa-kimi-no-uso-kousei-ep-1-bgm-piano-cover';
+      soundFile = 'https://soundcloud.com/mitis/mitis-written-emotions-free';
       localStorage.setItem('soundUrl', soundFile);
     }
 
@@ -112,7 +112,7 @@ class HomePage extends React.Component {
   componentWillMount(){
     const script = document.createElement("script");
     script.src = "https://code.getmdl.io/1.2.0/material.min.js";
-    script.async = true;
+    script.async = false;
     document.body.appendChild(script);
   }
 
@@ -256,14 +256,41 @@ class HomePage extends React.Component {
 
   }
 
+  setAndPlay = (thisSongUrl) => {
+    var $this = this;
+    this.setState({inputUrl: thisSongUrl});
+    setTimeout(function(){
+      $this.playMusic();
+    }, 500);
+  }
+
   render() {
     var $this = this;
+
+    var recommendedSongs = [
+      {
+        name: "Prelude 20-5 (Raindrop) - Chopin",
+        url: "https://soundcloud.com/calcatelli/celestial-chopin-raindrop-prelude-op-28-n-15-performed-on-a-celesta"
+      },{
+        name: "Emotions free - Mitis",
+        url: "https://soundcloud.com/mitis/mitis-written-emotions-free"
+      },{
+        name: "Rameses B - Bae Bae",
+        url: "https://soundcloud.com/mrsuicidesheep/rameses-b-bae-bae"
+      },{
+        name: "Dearest - Anime NZ",
+        url: "https://soundcloud.com/dysan-aufar/my-dearest-piano-cov-animenz-ver"
+      },{
+        name: "Faded (ODESZA Remix) - ZHU",
+        url: "https://soundcloud.com/odesza/zhu-faded-odesza-remix"
+      }
+    ];
 
     return (
       <Layout>
         <ripple style={mainStyle}>
 
-          <div style={{color: "white", textAlign: "center", width: "140px", position: "relative"}}>
+          <div id="demo-menu-lower-left" style={{color: "white", textAlign: "center", width: "140px", position: "relative", cursor : "pointer"}}>
             <AtvImg
                 layers={[
                   $this.state.artwork_url
@@ -274,10 +301,20 @@ class HomePage extends React.Component {
               />
             {$this.state.title}
             <img src="https://developers.soundcloud.com/assets/logo_big_white-65c2b096da68dd533db18b9f07d14054.png" style={{borderRadius : "50%", width: "40px", height : "40px", backgroundColor : "rgba(0,0,0,0.8)" , objectFit: "contain", position: "absolute", left: "5px", top: "5px"}}/>
+
           </div>
 
+          <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+              htmlFor="demo-menu-lower-left">
+              {
+                recommendedSongs.map((song, index) => (
+                   <li key={song.name} className="mdl-menu__item" onClick={()=>this.setAndPlay(song.url)}>{song.name}</li>
+                ))
+              }
+          </ul>
+
           <div style={{position: "fixed", bottom: "0", width: "100%", color: "white", padding: "0 10px"}}>
-            <span style={{color: "white", lineHeight: "66px"}}>Real Time Audio Effects - Patrick Lai</span>
+            <span style={{color: "white", lineHeight: "66px"}}> Audio Synced Droplets - by Patrick Lai</span>
 
             <button className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" style={{float: "right", marginRight: "30px"}}  onClick={this.playMusic}>
               <i className="material-icons">play_arrow</i>
