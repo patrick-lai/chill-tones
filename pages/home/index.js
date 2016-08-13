@@ -32,8 +32,15 @@ class HomePage extends React.Component {
   constructor(props) {
     super(props);
 
+    var soundFile = localStorage.getItem('soundUrl');
+
+    if(!soundFile){
+      soundFile = 'https://soundcloud.com/blackchaosvortex/shigatsu-wa-kimi-no-uso-kousei-ep-1-bgm-piano-cover';
+      localStorage.setItem('soundUrl', soundFile);
+    }
+
     this.state = {
-      inputUrl: 'https://soundcloud.com/blackchaosvortex/shigatsu-wa-kimi-no-uso-kousei-ep-1-bgm-piano-cover'
+      inputUrl: soundFile
     };
 
     this.changeSong = this.changeSong.bind(this);
@@ -90,6 +97,9 @@ class HomePage extends React.Component {
           if(!window.analyser){
             $this.setupAudio(window.musicPlayer);
           }
+
+          localStorage.setItem('soundUrl', $this.state.inputUrl);
+
           window.musicPlayer.load();
           window.musicPlayer.play();
 
