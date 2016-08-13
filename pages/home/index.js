@@ -16,6 +16,9 @@ import s from './styles.css';
 import { title, html } from './index.md';
 import "jquery.ripples";
 import lodash from "lodash";
+import SC from "soundcloud";
+import http from "es6-request";
+import AtvImg from 'react-atv-img';
 
 var mainStyle = {
   backgroundImage: "url('/images/bg.jpg')",
@@ -27,9 +30,82 @@ var mainStyle = {
 
 class HomePage extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      inputUrl: 'https://soundcloud.com/mitis/mitis-born-free-download'
+    };
+
+    this.changeSong = this.changeSong.bind(this);
+    this.playMusic = this.playMusic.bind(this);
+  }
+
   static propTypes = {
     articles: PropTypes.array.isRequired,
-  };
+  };b
+
+  changeSong(event){
+      this.setState({inputUrl: event.target.value});
+  }
+
+  getPathFromUrl(inputUrl){
+    var paths = inputUrl.split("/");
+    return "/users/"+paths[3]+"/tracks/"+paths[4];
+  }
+
+  setupAudio(myAudio){
+     window.AudioContext = AudioContext || window.webkitAudioContext;
+     var context = new AudioContext();
+     window.analyser = context.createAnalyser();
+     window.fbc_array = new Uint8Array(window.analyser.frequencyBinCount);
+
+     var source = context.createMediaElementSource(myAudio);
+
+     window.analyser.smoothingTimeConstant = 0.8;
+     window.analyser.fftSize = 512;
+
+     source.connect(analyser);
+     source.connect(context.destination);
+     window.analyser.connect(context.destination);
+
+     window.frameLooper();
+   }
+
+  playMusic(event){
+      var $this = this;
+      SC.get(this.getPathFromUrl(this.state.inputUrl)).then(function(sound){
+
+        // Put info at the top
+
+        if(sound.streamable){
+
+          $this.setState(...$this.state, {
+            title: sound.title,
+            artwork_url: sound.artwork_url,
+            tag_list: sound.tag_list
+          })
+
+          window.musicPlayer.crossOrigin = "anonymous";
+          window.musicPlayer.src = sound.stream_url+"?client_id=a05e7ac15e7bd3214c4bf157a43d5245";
+          if(!window.analyser){
+            $this.setupAudio(window.musicPlayer);
+          }
+          window.musicPlayer.load();
+          window.musicPlayer.play();
+
+        }else{
+          alert("this file is not streamable");
+        }
+      });
+  }
+
+  componentWillMount(){
+    const script = document.createElement("script");
+    script.src = "https://code.getmdl.io/1.2.0/material.min.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }
 
   componentDidMount() {
     document.title = title;
@@ -57,12 +133,9 @@ class HomePage extends React.Component {
       $el.ripples('drop', x, y, dropRadius, str);
     }
 
-    // Setup audio beater
-    var userFunction;
-
     var options = {
       timing : 10,
-      peakThreshold: 60
+      peakThreshold: 55
     };
 
     var theBeat = {};
@@ -81,10 +154,6 @@ class HomePage extends React.Component {
        );
      }();
 
-     var context = new AudioContext();
-     var analyser = context.createAnalyser();
-     var fbc_array = new Uint8Array(analyser.frequencyBinCount);
-
      function shouldTrigger(i){
        var thisThreshold = options.peakThreshold;
 
@@ -95,12 +164,11 @@ class HomePage extends React.Component {
        return fbc_array[i] - lodash.min(theBeat[i].previousThresholds) > thisThreshold;
      }
 
-     function frameLooper(){
+     window.frameLooper = function(){
        // This makes it request next frame
-       requestAnimFrame(frameLooper);
-       analyser.getByteFrequencyData(fbc_array);
-
-       for(var i in fbc_array){
+       requestAnimFrame(window.frameLooper);
+       window.analyser.getByteFrequencyData(window.fbc_array);
+       for(var i in window.fbc_array){
 
          if(theBeat[i] == undefined){
            theBeat[i] = {
@@ -112,7 +180,7 @@ class HomePage extends React.Component {
         var shouldInclude = i%150 == 0;
 
         // Check if the jump is big
-        if(shouldTrigger(i) && shouldInclude){
+        if(shouldTrigger(i) && shouldInclude){0
 
             if( i < 100){
               putOneRandomRipple(true, 80 , 0.08);
@@ -135,31 +203,13 @@ class HomePage extends React.Component {
 
      }
 
-     function initAudio(myAudio, fn){
-       window.AudioContext = AudioContext || window.webkitAudioContext;
-       context = new AudioContext();
-       userFunction = fn;
-       analyser = context.createAnalyser();
-       fbc_array = new Uint8Array(analyser.frequencyBinCount);
-
-       var source = context.createMediaElementSource(myAudio);
-
-       analyser.smoothingTimeConstant = 0.8;
-       analyser.fftSize = 512;
-
-       source.connect(analyser);
-       source.connect(context.destination);
-       analyser.connect(context.destination);
-
-       frameLooper();
-     }
-
-     // Setup Heartbeatb
-     var musicFile = "/sound/chihiro.mp3";
-     var musicPlayer = new Audio(musicFile);
+     // Setup sound
+     window.musicPlayer = new Audio();
+     window.musicPlayer.crossOrigin = "anonymous";
+     window.musicPlayer.volume = 0.5;
 
      // Do some magic to make it loop more "seamless"
-     musicPlayer.addEventListener('timeupdate', function(){
+     window.musicPlayer.addEventListener('timeupdate', function(){
                     var startTime = 0.2;
                     // Raise this until it plays "seamlessly"
                     var buffer = 0.50;
@@ -168,18 +218,50 @@ class HomePage extends React.Component {
                         this.play();
                     }}, false);
 
+    SC.initialize({
+      client_id: 'a05e7ac15e7bd3214c4bf157a43d5245'
+    });
 
-     initAudio(musicPlayer)
-
-    musicPlayer.play();
+    // Play music a bit after load
+    var $this = this;
+    setTimeout(function(){
+      $this.playMusic();
+    }, 2000);
 
   }
 
   render() {
+    var $this = this;
+
     return (
       <Layout>
         <ripple style={mainStyle}>
-          <span style={{position: "fixed", bottom : "10px", left: "10px", color: "white"}}>Real Time Audio Effects - Patrick Lai</span>
+
+          <div style={{color: "white", textAlign: "center", width: "140px", position: "relative"}}>
+            <AtvImg
+                layers={[
+                  $this.state.artwork_url
+                ]}
+                staticFallback={$this.state.artwork_url}
+                isStatic={false}
+                style={{ width: 100, height: 100, padding : "20px" }}
+              />
+            {$this.state.title}
+            <img src="https://developers.soundcloud.com/assets/logo_big_white-65c2b096da68dd533db18b9f07d14054.png" style={{borderRadius : "50%", width: "40px", height : "40px", backgroundColor : "rgba(0,0,0,0.8)" , objectFit: "contain", position: "absolute", left: "5px", top: "5px"}}/>
+          </div>
+
+          <div style={{position: "fixed", bottom: "0", width: "100%", color: "white", padding: "0 10px"}}>
+            <span style={{color: "white", lineHeight: "66px"}}>Real Time Audio Effects - Patrick Lai</span>
+
+            <button className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" style={{float: "right", marginRight: "30px"}}  onClick={this.playMusic}>
+              <i className="material-icons">play_arrow</i>
+            </button>
+            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style={{float: "right", width: "400px", marginRight: "10px"}}>
+              <input className="mdl-textfield__input" type="text" id="inputUrl" value={$this.state.inputUrl} onChange={this.changeSong}/>
+              <label className="mdl-textfield__label" htmlFor="inputUrl">SoundCloud Url</label>
+            </div>
+
+          </div>
         </ripple>
       </Layout>
     );
