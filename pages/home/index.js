@@ -281,8 +281,8 @@ class HomePage extends React.Component {
         name: "Dearest - Anime NZ",
         url: "https://soundcloud.com/dysan-aufar/my-dearest-piano-cov-animenz-ver"
       },{
-        name: "Faded (ODESZA Remix) - ZHU",
-        url: "https://soundcloud.com/odesza/zhu-faded-odesza-remix"
+        name: "Get F*cked Up EDM Electro House - Terence Chiminello",
+        url: "https://soundcloud.com/terencechiminello/terence-chiminello-lets-get"
       }
     ];
 
@@ -290,7 +290,7 @@ class HomePage extends React.Component {
       <Layout>
         <ripple style={mainStyle}>
 
-          <div id="demo-menu-lower-left" style={{color: "white", textAlign: "center", width: "140px", position: "relative", cursor : "pointer"}}>
+          <div id="demo-menu-lower-left" style={{color: "white", textAlign: "center", width: "140px", margin: "10px", position: "relative", cursor : "pointer"}}>
             <AtvImg
                 layers={[
                   $this.state.artwork_url
@@ -306,6 +306,7 @@ class HomePage extends React.Component {
 
           <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
               htmlFor="demo-menu-lower-left">
+              <li className="mdl-menu__item" style={{fontWeight: "bold"}}>Recommended Songs (Can put any soundcloud Url bottom right too)</li>
               {
                 recommendedSongs.map((song, index) => (
                    <li key={song.name} className="mdl-menu__item" onClick={()=>this.setAndPlay(song.url)}>{song.name}</li>
