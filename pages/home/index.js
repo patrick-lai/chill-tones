@@ -33,7 +33,7 @@ class HomePage extends React.Component {
     super(props);
 
     this.state = {
-      inputUrl: 'https://soundcloud.com/mitis/mitis-born-free-download'
+      inputUrl: 'https://soundcloud.com/blackchaosvortex/shigatsu-wa-kimi-no-uso-kousei-ep-1-bgm-piano-cover'
     };
 
     this.changeSong = this.changeSong.bind(this);
@@ -134,7 +134,7 @@ class HomePage extends React.Component {
 
     var options = {
       timing : 10,
-      peakThreshold: 55
+      peakThreshold: 50
     };
 
     var theBeat = {};
@@ -157,7 +157,11 @@ class HomePage extends React.Component {
        var thisThreshold = options.peakThreshold;
 
        if(i < 100){
-         thisThreshold = thisThreshold / 2.5;
+         thisThreshold = thisThreshold / 2;
+       }
+
+       if(i < 50){
+         thisThreshold = thisThreshold / 2;
        }
 
        return fbc_array[i] - lodash.min(theBeat[i].previousThresholds) > thisThreshold;
@@ -167,6 +171,9 @@ class HomePage extends React.Component {
        // This makes it request next frame
        requestAnimFrame(window.frameLooper);
        window.analyser.getByteFrequencyData(window.fbc_array);
+
+       var rippleStrength = -0.08;
+
        for(var i in window.fbc_array){
 
          if(theBeat[i] == undefined){
@@ -176,17 +183,17 @@ class HomePage extends React.Component {
          }
 
         // Tighter lower frequencies, higher upper frequencies
-        var shouldInclude = i%150 == 0;
+        var shouldInclude = i%50 == 0 || (i < 50 && i%10 == 0) || (i < 10);
 
         // Check if the jump is big
-        if(shouldTrigger(i) && shouldInclude){0
+        if(shouldTrigger(i) && shouldInclude){
 
             if( i < 100){
-              putOneRandomRipple(true, 80 , 0.08);
+              rippleStrength += 0.03
             }else if (i < 200){
-              putOneRandomRipple(true, 20 ,0.05);
+              rippleStrength += 0.02
             }else{
-              putOneRandomRipple(true, 5 ,0.02);
+              rippleStrength += 0.01
             }
 
             theBeat[i].previousThresholds = [];
@@ -198,6 +205,16 @@ class HomePage extends React.Component {
           theBeat[i].previousThresholds.shift();
         }
 
+       }
+
+       if(rippleStrength > 0){
+
+         rippleStrength = rippleStrength > 0.5 ? 0.5 : rippleStrength;
+
+         var dropSize = 20 + rippleStrength*200;
+         dropSize = dropSize > 80 ? 80 : dropSize;
+
+         putOneRandomRipple(true, dropSize , rippleStrength);
        }
 
      }
