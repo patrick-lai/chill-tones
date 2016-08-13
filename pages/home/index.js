@@ -79,6 +79,16 @@ class HomePage extends React.Component {
    }
 
   playMusic(event){
+
+      if(window.needHumanInteraction){
+        window.musicPlayer.play();
+        setTimeout(function(){
+          if(!window.musicPlayer.paused){
+            window.needHumanInteraction = false;
+          }
+        },500)
+      }
+
       var $this = this;
       SC.get(this.getPathFromUrl(this.state.inputUrl)).then(function(sound){
 
@@ -109,10 +119,10 @@ class HomePage extends React.Component {
       });
   }
 
-  componentWillMount(){
+  componentWillMount() {
     const script = document.createElement("script");
     script.src = "https://code.getmdl.io/1.2.0/material.min.js";
-    script.async = false;
+    script.async = true;
     document.body.appendChild(script);
   }
 
@@ -248,12 +258,40 @@ class HomePage extends React.Component {
       client_id: 'a05e7ac15e7bd3214c4bf157a43d5245'
     });
 
+    var isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
+        },
+        any: function() {
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+        }
+    };
+
     // Play music a bit after load
     var $this = this;
     setTimeout(function(){
       $this.playMusic();
     }, 2000);
 
+    if(isMobile.any()) {
+      window.needHumanInteraction = true;
+    }
+
+    if(!(typeof(componentHandler) == 'undefined')){
+        componentHandler.upgradeAllRegistered();
+    }
   }
 
   setAndPlay = (thisSongUrl) => {
@@ -261,7 +299,7 @@ class HomePage extends React.Component {
     this.setState({inputUrl: thisSongUrl});
     setTimeout(function(){
       $this.playMusic();
-    }, 500);
+    }, 200);
   }
 
   render() {
@@ -289,7 +327,6 @@ class HomePage extends React.Component {
     return (
       <Layout>
         <ripple style={mainStyle}>
-
           <div id="demo-menu-lower-left" style={{color: "white", textAlign: "center", width: "140px", margin: "10px", position: "relative", cursor : "pointer"}}>
             <AtvImg
                 layers={[
