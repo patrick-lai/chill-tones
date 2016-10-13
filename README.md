@@ -2,16 +2,20 @@
 
 ## About
 
-Real time Visualization sound cloud audio files using WebAudioApi
+Real time Visualization sound cloud audio files using WebAudioApi  
 
 ## Install
 
-npm i
+npm i  
 
 ## Run
 
-npm run
+npm run %script%  
 
+Scripts included in app:  
+-test  
+-publish  
+-start  
 
 ## Deployment
 

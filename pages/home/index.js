@@ -40,16 +40,19 @@ class HomePage extends React.Component {
     }
 
     this.state = {
-      inputUrl: soundFile
+      inputUrl: soundFile,
+      volume: 70
     };
 
     this.changeSong = this.changeSong.bind(this);
     this.playMusic = this.playMusic.bind(this);
+    this.stopMusic = this.stopMusic.bind(this);
+    this.setVolume = this.setVolume.bind(this);
   }
 
   static propTypes = {
-    articles: PropTypes.array.isRequired,
-  };b
+
+  };
 
   changeSong(event){
       this.setState({inputUrl: event.target.value});
@@ -77,6 +80,18 @@ class HomePage extends React.Component {
 
      window.frameLooper();
    }
+
+  stopMusic(event){
+   window.musicPlayer.pause();
+  }
+
+  setVolume(event){
+    var newVolume =  event.target.value;
+    this.setState(...this.state,{
+      volume: newVolume
+    })
+    window.musicPlayer.volume = event.target.value/100;
+  }
 
   playMusic(event){
 
@@ -327,6 +342,7 @@ class HomePage extends React.Component {
     return (
       <Layout>
         <ripple style={mainStyle}>
+
           <div id="demo-menu-lower-left" style={{color: "white", textAlign: "center", width: "140px", margin: "10px", position: "relative", cursor : "pointer"}}>
             <AtvImg
                 layers={[
@@ -352,14 +368,26 @@ class HomePage extends React.Component {
           </ul>
 
           <div style={{position: "fixed", bottom: "0", width: "100%", color: "white", padding: "0 10px"}}>
-            <span style={{color: "white", lineHeight: "66px"}}> Audio Synced Droplets - by Patrick Lai</span>
 
-            <button className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" style={{float: "right", marginRight: "30px"}}  onClick={this.playMusic}>
-              <i className="material-icons">play_arrow</i>
-            </button>
-            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style={{float: "right", width: "400px", marginRight: "10px"}}>
-              <input className="mdl-textfield__input" type="text" id="inputUrl" value={$this.state.inputUrl} onChange={this.changeSong}/>
-              <label className="mdl-textfield__label" htmlFor="inputUrl">SoundCloud Url</label>
+            <div>
+              <span style={{color: "white", lineHeight: "66px"}}> Audio Synced Droplets - by Patrick Lai</span>
+              <button className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" style={{float: "right", marginRight: "30px"}}  onClick={this.stopMusic}>
+                <i className="material-icons">stop_arrow</i>
+              </button>
+              <button className="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" style={{float: "right", marginRight: "10px"}}  onClick={this.playMusic}>
+                <i className="material-icons">play_arrow</i>
+              </button>
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style={{float: "right", width: "400px", marginRight: "10px"}}>
+                <input className="mdl-textfield__input" type="text" id="inputUrl" value={$this.state.inputUrl} onChange={this.changeSong}/>
+                <label className="mdl-textfield__label" htmlFor="inputUrl">SoundCloud Url</label>
+              </div>
+            </div>
+
+            <div>
+                <p style={{width: "590px", position: "absolute", bottom: "50px", right: "10px"}}>
+                  <label style={{marginLeft: "26px"}}>Volume</label>
+                  <input className="mdl-slider mdl-js-slider" id="volumeSlider" type="range" min="0" max="100" onChange={this.setVolume} value={$this.state.volume}/>
+                </p>
             </div>
 
           </div>
