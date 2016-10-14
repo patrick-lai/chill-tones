@@ -13,6 +13,7 @@ import history from '../../core/history';
 import * as Actions from '../../core/Actions';
 import * as Songs from '../../core/Songs';
 import { connect } from 'react-redux';
+import * as Config from '../../core/config';
 
 class MediaControls extends React.Component {
 
@@ -52,7 +53,7 @@ class MediaControls extends React.Component {
   componentDidMount() {
 
     SC.initialize({
-      client_id: 'a05e7ac15e7bd3214c4bf157a43d5245'
+      client_id: Config.default.client_id
     });
 
     var soundFile = localStorage.getItem('soundUrl');

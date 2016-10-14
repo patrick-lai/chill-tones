@@ -4,6 +4,7 @@
 import * as types from './ActionTypes';
 import * as Store from './store';
 import SC from "soundcloud";
+import * as Config from './config';
 
 var store = Store.default;
 
@@ -75,7 +76,7 @@ export function play() {
       });
 
       window.musicPlayer.crossOrigin = "anonymous";
-      window.musicPlayer.src = sound.stream_url+"?client_id=a05e7ac15e7bd3214c4bf157a43d5245";
+      window.musicPlayer.src = sound.stream_url+"?client_id="+Config.default.client_id;
       if(!window.analyser){
         setupAudio(window.musicPlayer);
       }
