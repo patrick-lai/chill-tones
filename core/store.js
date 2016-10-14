@@ -9,17 +9,51 @@
  */
 
 import { createStore } from 'redux';
+import * as types from './ActionTypes';
+
+var soundFile = localStorage.getItem('songUrl');
+
+if(!soundFile){
+  soundFile = 'https://soundcloud.com/mitis/mitis-written-emotions-free';
+  localStorage.setItem('songUrl', soundFile);
+}
+
+const initialStore = {
+  songUrl: soundFile,
+  volume: 70,
+  appState: {
+    title: null,
+    artwork_url: null,
+    tag_list: null
+  }
+};
 
 // Centralized application state
 // For more information visit http://redux.js.org/
 const store = createStore((state, action) => {
   // TODO: Add action handlers (aka "reduces")
-  switch (action) {
-    case 'COUNT':
-      return { ...state, count: (state.count || 0) + 1 };
+  switch (action.type) {
+    case types.SET_SONG:
+      localStorage.setItem('songUrl', action.songUrl);
+      return {
+        ...state,
+        songUrl: action.songUrl
+      };
+    case types.SET_VOLUME:
+      // Sets volume
+      window.musicPlayer.volume = action.volume/100;
+      return {
+        ...state,
+        volume: action.volume
+      };
+    case types.SET_STATE:
+      return {
+        ...state,
+        appState: action.appState
+      };
     default:
       return state;
   }
-});
+},initialStore);
 
 export default store;

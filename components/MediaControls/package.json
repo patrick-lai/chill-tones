@@ -1,0 +1,6 @@
+{
+  "name": "MediaControls",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./MediaControls.js"
+}
