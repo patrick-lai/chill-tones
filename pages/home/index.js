@@ -19,8 +19,7 @@ import Layout from '../../components/Layout';
 import MediaControls from '../../components/MediaControls';
 
 // Actions and Data
-import * as types from '../../core/ActionTypes';
-import * as Songs from '../../core/Songs';
+import Songs from '../../core/Songs';
 import * as Actions from '../../core/Actions';
 import * as AudioRipple from './AudioRipple';
 
@@ -99,7 +98,7 @@ class HomePage extends React.Component {
               htmlFor="demo-menu-lower-left">
               <li className="mdl-menu__item" style={{fontWeight: "bold"}}>Recommended Songs (Can put any soundcloud Url bottom right too)</li>
               {
-                Songs.default.map((song, index) => (
+                Songs.map((song, index) => (
                    <li key={song.name} className="mdl-menu__item" onClick={()=>this.setAndPlay(song.url)}>{song.name}</li>
                 ))
               }

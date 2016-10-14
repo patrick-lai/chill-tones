@@ -10,10 +10,10 @@
 
 import React, { PropTypes } from 'react';
 import history from '../../core/history';
-import * as Actions from '../../core/Actions';
-import * as Songs from '../../core/Songs';
 import { connect } from 'react-redux';
-import * as Config from '../../core/config';
+import Songs from '../../core/Songs';
+import * as Actions from '../../core/Actions';
+import Config from '../../core/config';
 
 class MediaControls extends React.Component {
 
@@ -53,13 +53,13 @@ class MediaControls extends React.Component {
   componentDidMount() {
 
     SC.initialize({
-      client_id: Config.default.client_id
+      client_id: Config.client_id
     });
 
     var soundFile = localStorage.getItem('soundUrl');
 
     if(!soundFile){
-      soundFile = Songs.default[0].url;
+      soundFile = Songs[0].url;
       localStorage.setItem('soundUrl', soundFile);
     }
     // Load song

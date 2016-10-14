@@ -2,21 +2,19 @@
 // Bunch of actions
 
 import * as types from './ActionTypes';
-import * as Store from './store';
+import Store from './store';
 import SC from "soundcloud";
-import * as Config from './config';
-
-var store = Store.default;
+import Config from './config';
 
 export function setVolume(volume) {
-  store.dispatch({
+  Store.dispatch({
     type: types.SET_VOLUME,
     volume: volume
   });
 }
 
 export function setSong(songUrl) {
-  store.dispatch({
+  Store.dispatch({
     type: types.SET_SONG,
     songUrl: songUrl
   });
@@ -58,15 +56,15 @@ export function play() {
     },500)
   }
 
-  if(!store.getState() || !store.getState().songUrl) return;
+  if(!Store.getState() || !Store.getState().songUrl) return;
 
-  SC.get(getPathFromUrl(store.getState().songUrl)).then(function(sound){
+  SC.get(getPathFromUrl(Store.getState().songUrl)).then(function(sound){
 
     // Put info at the top
 
     if(sound.streamable){
 
-      store.dispatch({
+      Store.dispatch({
         type: types.SET_STATE,
         appState: {
           title: sound.title,
@@ -76,12 +74,12 @@ export function play() {
       });
 
       window.musicPlayer.crossOrigin = "anonymous";
-      window.musicPlayer.src = sound.stream_url+"?client_id="+Config.default.client_id;
+      window.musicPlayer.src = sound.stream_url+"?client_id="+Config.client_id;
       if(!window.analyser){
         setupAudio(window.musicPlayer);
       }
 
-      localStorage.setItem('soundUrl', store.getState().songUrl);
+      localStorage.setItem('soundUrl', Store.getState().songUrl);
 
       window.musicPlayer.load();
       window.musicPlayer.play();
