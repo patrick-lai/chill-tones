@@ -1,12 +1,10 @@
-
-
 ## About
 
-Real time Visualization sound cloud audio files using WebAudioApi  
+Real time Visualization sound cloud audio files using WebAudioApi. Regretably this was made with some sort of scaffold so there is so much fat in the repo.
 
 ## Install
 
-npm i  
+npm i
 
 Create a file in the "core" folder called config.js and structure it like this:
 
@@ -18,12 +16,12 @@ export default {
 
 ## Run
 
-npm run %script%  
+npm run %script%
 
 Scripts included in app:  
 -test  
 -publish  
--start  
+-start
 
 ## Deployment
 
